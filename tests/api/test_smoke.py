@@ -39,3 +39,21 @@ def test_me_unsuccessfully_with_bad_api_key():
     )
 
     assert response.status_code == 401
+
+@allure.feature("API smoke tests")
+@pytest.mark.api
+def test_view_events(api_client):
+    with allure.step("get events data"):
+        response = api_client.get("/api/public/v1/events")
+    
+    allure.attach(
+        body=response.text,
+        name="Response Body",
+        attachment_type=allure.attachment_type.JSON
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    # get size of items in the response body
+    psize = len(body["items"])
+    assert body["page_size"] == psize
